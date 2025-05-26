@@ -4,10 +4,13 @@ Human-in-the-Loop MCP Server
 
 This server provides tools for getting human input and choices through GUI dialogs.
 It enables LLMs to pause and ask for human feedback, input, or decisions.
+Now supports both Windows and macOS platforms.
 """
 
 import asyncio
 import json
+import platform
+import subprocess
 import threading
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
@@ -19,6 +22,12 @@ from typing import Annotated
 
 from fastmcp import FastMCP, Context
 
+# Platform detection
+CURRENT_PLATFORM = platform.system().lower()
+IS_WINDOWS = CURRENT_PLATFORM == 'windows'
+IS_MACOS = CURRENT_PLATFORM == 'darwin'
+IS_LINUX = CURRENT_PLATFORM == 'linux'
+
 # Initialize the MCP server
 mcp = FastMCP("Human-in-the-Loop Server")
 
@@ -26,15 +35,45 @@ mcp = FastMCP("Human-in-the-Loop Server")
 _gui_initialized = False
 _gui_lock = threading.Lock()
 
+def get_system_font():
+    """Get appropriate system font for the current platform"""
+    if IS_MACOS:
+        return ("SF Pro Display", 13)  # macOS system font
+    elif IS_WINDOWS:
+        return ("Segoe UI", 9)  # Windows system font
+    else:
+        return ("Ubuntu", 10)  # Linux/other systems
+
+def configure_macos_app():
+    """Configure macOS-specific application settings"""
+    if IS_MACOS:
+        try:
+            # Try to bring Python to front on macOS
+            subprocess.run([
+                'osascript', '-e', 
+                'tell application "System Events" to set frontmost of first process whose unix id is {} to true'.format(os.getpid())
+            ], check=False, capture_output=True)
+        except Exception:
+            pass  # Ignore if osascript is not available
+
 def ensure_gui_initialized():
     """Ensure GUI subsystem is properly initialized"""
     global _gui_initialized
     with _gui_lock:
         if not _gui_initialized:
-            # Force tkinter to initialize properly on Windows
             try:
                 test_root = tk.Tk()
                 test_root.withdraw()
+                
+                # Platform-specific initialization
+                if IS_MACOS:
+                    # macOS-specific configuration
+                    test_root.call('wm', 'attributes', '.', '-topmost', '1')
+                    configure_macos_app()
+                elif IS_WINDOWS:
+                    # Windows-specific configuration (existing behavior)
+                    test_root.attributes('-topmost', True)
+                
                 test_root.destroy()
                 _gui_initialized = True
             except Exception as e:
@@ -42,15 +81,33 @@ def ensure_gui_initialized():
                 _gui_initialized = False
         return _gui_initialized
 
+def configure_window_for_platform(window):
+    """Apply platform-specific window configurations"""
+    try:
+        if IS_MACOS:
+            # macOS-specific window configuration
+            window.call('wm', 'attributes', '.', '-topmost', '1')
+            window.lift()
+            window.focus_force()
+            # Try to activate the app on macOS
+            configure_macos_app()
+        elif IS_WINDOWS:
+            # Windows-specific configuration (existing behavior)
+            window.attributes('-topmost', True)
+            window.lift()
+            window.focus_force()
+    except Exception as e:
+        print(f"Warning: Platform-specific window configuration failed: {e}")
+
 def create_input_dialog(title: str, prompt: str, default_value: str = "", input_type: str = "text"):
     """Create an input dialog window - runs in main thread"""
     try:
         # Create root window
         root = tk.Tk()
         root.withdraw()  # Hide main window
-        root.attributes('-topmost', True)  # Bring to front
-        root.lift()
-        root.focus_force()
+        
+        # Apply platform-specific configurations
+        configure_window_for_platform(root)
         
         # Show the dialog
         if input_type == "text":
@@ -108,9 +165,7 @@ def show_confirmation(title: str, message: str):
     try:
         root = tk.Tk()
         root.withdraw()
-        root.attributes('-topmost', True)
-        root.lift()
-        root.focus_force()
+        configure_window_for_platform(root)
         result = messagebox.askyesno(title, message, parent=root)
         root.destroy()
         return result
@@ -123,9 +178,7 @@ def show_info(title: str, message: str):
     try:
         root = tk.Tk()
         root.withdraw()
-        root.attributes('-topmost', True)
-        root.lift()
-        root.focus_force()
+        configure_window_for_platform(root)
         messagebox.showinfo(title, message, parent=root)
         root.destroy()
         return True
@@ -142,15 +195,19 @@ class ChoiceDialog:
         self.dialog.title(title)
         self.dialog.grab_set()
         self.dialog.resizable(True, True)
-        self.dialog.attributes('-topmost', True)
-        self.dialog.lift()
-        self.dialog.focus_force()
         
-        # Center the dialog
-        self.dialog.geometry("450x350")
+        # Apply platform-specific configurations
+        configure_window_for_platform(self.dialog)
+        
+        # Set size based on platform
+        if IS_MACOS:
+            self.dialog.geometry("460x360")
+        else:
+            self.dialog.geometry("450x350")
+        
         self.center_window()
         
-        # Create the main frame
+        # Create the main frame with system font
         main_frame = ttk.Frame(self.dialog, padding="15")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
@@ -160,8 +217,9 @@ class ChoiceDialog:
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)
         
-        # Add prompt label
-        prompt_label = ttk.Label(main_frame, text=prompt, wraplength=400)
+        # Add prompt label with system font
+        system_font = get_system_font()
+        prompt_label = ttk.Label(main_frame, text=prompt, wraplength=400, font=system_font)
         prompt_label.grid(row=0, column=0, pady=(0, 15), sticky=(tk.W, tk.E))
         
         # Create choice selection widget
@@ -170,11 +228,11 @@ class ChoiceDialog:
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
         
-        # Use Listbox for selection
+        # Use Listbox for selection with system font
         if allow_multiple:
-            self.listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, height=10)
+            self.listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, height=10, font=system_font)
         else:
-            self.listbox = tk.Listbox(list_frame, selectmode=tk.SINGLE, height=10)
+            self.listbox = tk.Listbox(list_frame, selectmode=tk.SINGLE, height=10, font=system_font)
             
         for choice in choices:
             self.listbox.insert(tk.END, choice)
@@ -201,6 +259,11 @@ class ChoiceDialog:
         if choices:
             self.listbox.selection_set(0)  # Select first item by default
         
+        # Platform-specific final setup
+        if IS_MACOS:
+            # Additional macOS focus handling
+            self.dialog.after(100, lambda: self.listbox.focus_set())
+        
         # Wait for the dialog to complete
         self.dialog.wait_window()
     
@@ -209,8 +272,20 @@ class ChoiceDialog:
         self.dialog.update_idletasks()
         width = self.dialog.winfo_width()
         height = self.dialog.winfo_height()
-        x = (self.dialog.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.dialog.winfo_screenheight() // 2) - (height // 2)
+        
+        # Get screen dimensions
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        
+        # Calculate center position
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        
+        # Platform-specific adjustments
+        if IS_MACOS:
+            # Account for macOS menu bar
+            y = max(50, y - 50)
+        
         self.dialog.geometry(f"{width}x{height}+{x}+{y}")
     
     def ok_clicked(self):
@@ -233,12 +308,16 @@ class MultilineInputDialog:
         self.dialog.title(title)
         self.dialog.grab_set()
         self.dialog.resizable(True, True)
-        self.dialog.attributes('-topmost', True)
-        self.dialog.lift()
-        self.dialog.focus_force()
         
-        # Set size and center the dialog
-        self.dialog.geometry("550x450")
+        # Apply platform-specific configurations
+        configure_window_for_platform(self.dialog)
+        
+        # Set size based on platform
+        if IS_MACOS:
+            self.dialog.geometry("560x460")
+        else:
+            self.dialog.geometry("550x450")
+        
         self.center_window()
         
         # Create the main frame
@@ -251,8 +330,9 @@ class MultilineInputDialog:
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)
         
-        # Add prompt label
-        prompt_label = ttk.Label(main_frame, text=prompt, wraplength=500)
+        # Add prompt label with system font
+        system_font = get_system_font()
+        prompt_label = ttk.Label(main_frame, text=prompt, wraplength=500, font=system_font)
         prompt_label.grid(row=0, column=0, pady=(0, 15), sticky=(tk.W, tk.E))
         
         # Create text widget with scrollbar
@@ -261,7 +341,15 @@ class MultilineInputDialog:
         text_frame.columnconfigure(0, weight=1)
         text_frame.rowconfigure(0, weight=1)
         
-        self.text_widget = tk.Text(text_frame, wrap=tk.WORD, height=15, font=("Consolas", 10))
+        # Use appropriate font for text widget
+        if IS_MACOS:
+            text_font = ("Monaco", 12)  # macOS monospace font
+        elif IS_WINDOWS:
+            text_font = ("Consolas", 10)  # Windows monospace font
+        else:
+            text_font = ("Ubuntu Mono", 10)  # Linux monospace font
+        
+        self.text_widget = tk.Text(text_frame, wrap=tk.WORD, height=15, font=text_font)
         self.text_widget.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Add scrollbar
@@ -287,6 +375,11 @@ class MultilineInputDialog:
         # Focus on text widget
         self.text_widget.focus_set()
         
+        # Platform-specific final setup
+        if IS_MACOS:
+            # Additional macOS focus handling
+            self.dialog.after(100, lambda: self.text_widget.focus_set())
+        
         # Wait for the dialog to complete
         self.dialog.wait_window()
     
@@ -295,8 +388,20 @@ class MultilineInputDialog:
         self.dialog.update_idletasks()
         width = self.dialog.winfo_width()
         height = self.dialog.winfo_height()
-        x = (self.dialog.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.dialog.winfo_screenheight() // 2) - (height // 2)
+        
+        # Get screen dimensions
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        
+        # Calculate center position
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        
+        # Platform-specific adjustments
+        if IS_MACOS:
+            # Account for macOS menu bar
+            y = max(50, y - 50)
+        
         self.dialog.geometry(f"{width}x{height}+{x}+{y}")
     
     def ok_clicked(self):
@@ -332,7 +437,8 @@ async def get_user_input(
             return {
                 "success": False,
                 "error": "GUI system not available",
-                "cancelled": False
+                "cancelled": False,
+                "platform": CURRENT_PLATFORM
             }
         
         # Create the dialog in a separate thread to avoid blocking
@@ -348,7 +454,8 @@ async def get_user_input(
                 "success": True,
                 "user_input": result,
                 "input_type": input_type,
-                "cancelled": False
+                "cancelled": False,
+                "platform": CURRENT_PLATFORM
             }
         else:
             if ctx:
@@ -357,7 +464,8 @@ async def get_user_input(
                 "success": False,
                 "user_input": None,
                 "input_type": input_type,
-                "cancelled": True
+                "cancelled": True,
+                "platform": CURRENT_PLATFORM
             }
     
     except Exception as e:
@@ -366,7 +474,8 @@ async def get_user_input(
         return {
             "success": False,
             "error": str(e),
-            "cancelled": False
+            "cancelled": False,
+            "platform": CURRENT_PLATFORM
         }
 
 @mcp.tool()
@@ -393,7 +502,8 @@ async def get_user_choice(
             return {
                 "success": False,
                 "error": "GUI system not available",
-                "cancelled": False
+                "cancelled": False,
+                "platform": CURRENT_PLATFORM
             }
         
         # Create the dialog in a separate thread
@@ -410,7 +520,8 @@ async def get_user_choice(
                 "selected_choice": result,
                 "selected_choices": result if isinstance(result, list) else [result],
                 "allow_multiple": allow_multiple,
-                "cancelled": False
+                "cancelled": False,
+                "platform": CURRENT_PLATFORM
             }
         else:
             if ctx:
@@ -420,7 +531,8 @@ async def get_user_choice(
                 "selected_choice": None,
                 "selected_choices": [],
                 "allow_multiple": allow_multiple,
-                "cancelled": True
+                "cancelled": True,
+                "platform": CURRENT_PLATFORM
             }
     
     except Exception as e:
@@ -429,7 +541,8 @@ async def get_user_choice(
         return {
             "success": False,
             "error": str(e),
-            "cancelled": False
+            "cancelled": False,
+            "platform": CURRENT_PLATFORM
         }
 
 @mcp.tool()
@@ -454,7 +567,8 @@ async def get_multiline_input(
             return {
                 "success": False,
                 "error": "GUI system not available",
-                "cancelled": False
+                "cancelled": False,
+                "platform": CURRENT_PLATFORM
             }
         
         # Create the dialog in a separate thread
@@ -471,7 +585,8 @@ async def get_multiline_input(
                 "user_input": result,
                 "character_count": len(result),
                 "line_count": len(result.split('\n')),
-                "cancelled": False
+                "cancelled": False,
+                "platform": CURRENT_PLATFORM
             }
         else:
             if ctx:
@@ -479,7 +594,8 @@ async def get_multiline_input(
             return {
                 "success": False,
                 "user_input": None,
-                "cancelled": True
+                "cancelled": True,
+                "platform": CURRENT_PLATFORM
             }
     
     except Exception as e:
@@ -488,7 +604,8 @@ async def get_multiline_input(
         return {
             "success": False,
             "error": str(e),
-            "cancelled": False
+            "cancelled": False,
+            "platform": CURRENT_PLATFORM
         }
 
 @mcp.tool()
@@ -512,7 +629,8 @@ async def show_confirmation_dialog(
             return {
                 "success": False,
                 "error": "GUI system not available",
-                "confirmed": False
+                "confirmed": False,
+                "platform": CURRENT_PLATFORM
             }
         
         # Create the dialog in a separate thread
@@ -527,7 +645,8 @@ async def show_confirmation_dialog(
         return {
             "success": True,
             "confirmed": result,
-            "response": "yes" if result else "no"
+            "response": "yes" if result else "no",
+            "platform": CURRENT_PLATFORM
         }
     
     except Exception as e:
@@ -536,7 +655,8 @@ async def show_confirmation_dialog(
         return {
             "success": False,
             "error": str(e),
-            "confirmed": False
+            "confirmed": False,
+            "platform": CURRENT_PLATFORM
         }
 
 @mcp.tool()
@@ -559,7 +679,8 @@ async def show_info_message(
         if not ensure_gui_initialized():
             return {
                 "success": False,
-                "error": "GUI system not available"
+                "error": "GUI system not available",
+                "platform": CURRENT_PLATFORM
             }
         
         # Create the dialog in a separate thread
@@ -573,7 +694,8 @@ async def show_info_message(
         
         return {
             "success": True,
-            "acknowledged": result
+            "acknowledged": result,
+            "platform": CURRENT_PLATFORM
         }
     
     except Exception as e:
@@ -581,7 +703,8 @@ async def show_info_message(
             await ctx.error(f"Error showing info message: {str(e)}")
         return {
             "success": False,
-            "error": str(e)
+            "error": str(e),
+            "platform": CURRENT_PLATFORM
         }
 
 # Add a health check tool
@@ -595,8 +718,18 @@ async def health_check() -> Dict[str, Any]:
             "status": "healthy" if gui_available else "degraded",
             "gui_available": gui_available,
             "server_name": "Human-in-the-Loop Server",
-            "platform": sys.platform,
+            "platform": CURRENT_PLATFORM,
+            "platform_details": {
+                "system": platform.system(),
+                "release": platform.release(),
+                "version": platform.version(),
+                "machine": platform.machine(),
+                "processor": platform.processor()
+            },
             "python_version": sys.version.split()[0],
+            "is_windows": IS_WINDOWS,
+            "is_macos": IS_MACOS,
+            "is_linux": IS_LINUX,
             "tools_available": [
                 "get_user_input",
                 "get_user_choice", 
@@ -610,13 +743,14 @@ async def health_check() -> Dict[str, Any]:
             "status": "unhealthy",
             "gui_available": False,
             "error": str(e),
-            "platform": sys.platform
+            "platform": CURRENT_PLATFORM
         }
 
 # Main execution
 if __name__ == "__main__":
     print("Starting Human-in-the-Loop MCP Server...")
     print("This server provides tools for LLMs to interact with humans through GUI dialogs.")
+    print(f"Platform: {CURRENT_PLATFORM} ({platform.system()} {platform.release()})")
     print("")
     print("Available tools:")
     print("get_user_input - Get text/number input from user")
@@ -627,12 +761,24 @@ if __name__ == "__main__":
     print("health_check - Check server status")
     print("")
     
+    # Platform-specific startup messages
+    if IS_MACOS:
+        print("macOS detected - Using native system fonts and window management")
+        print("Note: You may need to allow Python to control your computer in System Preferences > Security & Privacy > Accessibility")
+    elif IS_WINDOWS:
+        print("Windows detected - Using Windows-optimized GUI settings")
+    elif IS_LINUX:
+        print("Linux detected - Using Linux-compatible GUI settings")
+    
     # Test GUI availability
     if ensure_gui_initialized():
-        print("GUI system initialized successfully")
+        print("✓ GUI system initialized successfully")
+        if IS_MACOS:
+            print("✓ macOS GUI optimizations applied")
     else:
-        print("Warning: GUI system may not be available")
+        print("⚠ Warning: GUI system may not be available")
     
+    print("")
     print("Starting MCP server...")
     
     # Run the server
