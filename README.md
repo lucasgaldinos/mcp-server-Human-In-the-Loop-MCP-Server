@@ -14,18 +14,43 @@ A powerful **Model Context Protocol (MCP) Server** that enables AI assistants to
 - **Multi-line Input**: Collect longer text content, code, or detailed descriptions
 - **Confirmation Dialogs**: Ask for yes/no decisions before proceeding
 - **Information Messages**: Display notifications and status updates
+- **LLM Guidance**: Built-in prompting guidance for when to use human-in-the-loop tools
 
 ### 🖥️ Cross-Platform Support
-- **Windows**: Native Windows GUI with Segoe UI fonts
+- **Windows**: Modern Windows 11-style GUI with beautiful styling, hover effects, and enhanced visual design
 - **macOS**: Native macOS experience with SF Pro Display fonts and proper window management
-- **Linux**: Ubuntu-compatible GUI with system fonts
+- **Linux**: Ubuntu-compatible GUI with modern styling and system fonts
 
 ### ⚡ Advanced Features
 - **Non-blocking Operation**: All dialogs run in separate threads
 - **Timeout Protection**: Configurable timeouts prevent hanging
 - **Platform Detection**: Automatic optimization for each operating system
+- **Modern UI Design**: Beautiful Windows 11-style interface with smooth animations and hover effects
 - **Error Handling**: Comprehensive error reporting and recovery
 - **Health Monitoring**: Built-in health check and status reporting
+- **Keyboard Shortcuts**: Full keyboard navigation support
+
+## 🎨 Modern Visual Design
+
+The Human-In-the-Loop MCP Server features a beautiful, modern interface designed for the current era:
+
+### Windows 11-Style Interface
+- **Clean, modern color scheme** with Windows 11-inspired design language
+- **Smooth hover effects** on buttons and interactive elements
+- **Enhanced typography** using Segoe UI and Consolas fonts
+- **Consistent spacing** and improved visual hierarchy
+- **Professional appearance** suitable for business and development environments
+
+### Cross-Platform Consistency
+- Platform-specific fonts and styling (SF Pro on macOS, Segoe UI on Windows, Ubuntu on Linux)
+- Adaptive sizing and positioning based on screen characteristics
+- Native-feeling interfaces that respect platform conventions
+
+### Enhanced User Experience
+- **Keyboard shortcuts** for all dialogs (Enter to confirm, Escape to cancel)
+- **Improved focus management** with logical tab order
+- **Better accessibility** with high contrast colors and clear visual feedback
+- **Responsive design** that works on different screen sizes
 
 ## 📦 Installation
 
@@ -133,6 +158,13 @@ result = await show_info_message(
 )
 ```
 
+#### Get LLM Guidance
+```python
+# Get comprehensive guidance on when to use human-in-the-loop tools
+guidance = await get_human_loop_prompt()
+# Returns structured guidance with examples and best practices
+```
+
 ### Response Format
 
 All tools return structured responses:
@@ -155,6 +187,33 @@ Monitor server status:
 status = await health_check()
 # Returns detailed platform and status information
 ```
+
+## 🧠 LLM Integration Guidance
+
+The server includes built-in prompting guidance to help AI assistants understand when and how to use human-in-the-loop tools effectively:
+
+```python
+guidance = await get_human_loop_prompt()
+```
+
+This tool returns comprehensive guidance including:
+- **When to use** each tool type
+- **Best practices** for user interaction
+- **Decision framework** for human-in-the-loop integration
+- **Example scenarios** and usage patterns
+- **Workflow integration** tips
+
+### Smart Decision Making
+
+The guidance helps LLMs make intelligent decisions about when to pause for human input:
+
+- **Ambiguous requirements** → Ask for clarification
+- **Creative decisions** → Get user preferences  
+- **Destructive actions** → Require confirmation
+- **Missing information** → Request specific details
+- **Long processes** → Provide status updates
+
+This ensures human interaction is meaningful and well-timed, enhancing rather than interrupting the user experience.
 
 ## 🔧 Configuration
 
@@ -185,6 +244,7 @@ You can modify the server by:
 | `get_multiline_input` | Multi-line text input |
 | `show_confirmation_dialog` | Yes/No confirmation |
 | `show_info_message` | Information display |
+| `get_human_loop_prompt` | Get guidance on when to use human-in-the-loop tools |
 | `health_check` | Server status check |
 
 ### Parameters
@@ -214,6 +274,10 @@ You can modify the server by:
 - `title` (str): Dialog window title
 - `message` (str): Information message
 
+#### get_human_loop_prompt
+- No parameters required
+- Returns comprehensive guidance for LLMs on when and how to use human-in-the-loop tools
+
 ## 🔍 Troubleshooting
 
 ### Common Issues
@@ -234,6 +298,11 @@ You can modify the server by:
 **Dialog Timeout**
 - Increase timeout value in environment variables
 - Check if user interaction is required
+
+**Visual Issues on Windows**
+- Ensure you're running on Windows 10/11 for best visual experience
+- Some styling features may be limited on older Windows versions
+- Update your graphics drivers if experiencing display issues
 
 ### Debug Mode
 
@@ -335,6 +404,41 @@ if confirmation["confirmed"]:
     await show_info_message("Success", "Files deleted successfully!")
 else:
     await show_info_message("Cancelled", "Operation cancelled by user.")
+```
+
+### Example 4: LLM Using Built-in Guidance
+```python
+# LLM gets guidance on when to use human-in-the-loop tools
+guidance = await get_human_loop_prompt()
+
+# LLM analyzes the situation using the decision framework
+user_request = "Create a backup of my important files"
+
+# Following guidance: "ambiguous requirements" → ask for clarification
+file_location = await get_user_input(
+    title="Backup Configuration",
+    prompt="Which directory contains your important files?",
+    default_value="~/Documents"
+)
+
+backup_format = await get_user_choice(
+    title="Backup Options", 
+    prompt="Choose backup format:",
+    choices=["Full Backup", "Compressed Archive", "Sync Copy"]
+)
+
+# Following guidance: "destructive actions" → require confirmation
+if backup_format["selected_choice"] == "Full Backup":
+    confirmed = await show_confirmation_dialog(
+        title="Confirm Backup",
+        message=f"Create full backup of {file_location['user_input']}? This may take several minutes."
+    )
+    
+    if confirmed["confirmed"]:
+        # Perform backup with status updates
+        await show_info_message("Backup Started", "Creating backup... Please wait.")
+        # ... backup process ...
+        await show_info_message("Success", "Backup completed successfully!")
 ```
 
 ---

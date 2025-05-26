@@ -40,9 +40,205 @@ def get_system_font():
     if IS_MACOS:
         return ("SF Pro Display", 13)  # macOS system font
     elif IS_WINDOWS:
-        return ("Segoe UI", 9)  # Windows system font
+        return ("Segoe UI", 10)  # Windows system font
     else:
         return ("Ubuntu", 10)  # Linux/other systems
+
+def get_title_font():
+    """Get title font for dialogs"""
+    if IS_MACOS:
+        return ("SF Pro Display", 16, "bold")
+    elif IS_WINDOWS:
+        return ("Segoe UI", 14, "bold")
+    else:
+        return ("Ubuntu", 14, "bold")
+
+def get_text_font():
+    """Get text font for text widgets"""
+    if IS_MACOS:
+        return ("Monaco", 12)  # macOS monospace font
+    elif IS_WINDOWS:
+        return ("Consolas", 11)  # Windows monospace font
+    else:
+        return ("Ubuntu Mono", 10)  # Linux monospace font
+
+def get_theme_colors():
+    """Get modern theme colors based on platform"""
+    if IS_WINDOWS:
+        return {
+            "bg_primary": "#FFFFFF",           # Pure white background
+            "bg_secondary": "#F8F9FA",         # Light gray background
+            "bg_accent": "#F1F3F4",            # Accent background
+            "fg_primary": "#202124",           # Dark text
+            "fg_secondary": "#5F6368",         # Secondary text
+            "accent_color": "#0078D4",         # Windows blue
+            "accent_hover": "#106EBE",         # Darker blue for hover
+            "border_color": "#E8EAED",         # Light border
+            "success_color": "#137333",        # Green for success
+            "error_color": "#D93025",          # Red for errors
+            "selection_bg": "#E3F2FD",         # Light blue selection
+            "selection_fg": "#1565C0"          # Dark blue selection text
+        }
+    elif IS_MACOS:
+        return {
+            "bg_primary": "#FFFFFF",
+            "bg_secondary": "#F5F5F7",
+            "bg_accent": "#F2F2F7",
+            "fg_primary": "#1D1D1F",
+            "fg_secondary": "#86868B",
+            "accent_color": "#007AFF",
+            "accent_hover": "#0056CC",
+            "border_color": "#D2D2D7",
+            "success_color": "#30D158",
+            "error_color": "#FF3B30",
+            "selection_bg": "#E3F2FD",
+            "selection_fg": "#1565C0"
+        }
+    else:  # Linux
+        return {
+            "bg_primary": "#FFFFFF",
+            "bg_secondary": "#F8F9FA",
+            "bg_accent": "#F1F3F4",
+            "fg_primary": "#202124",
+            "fg_secondary": "#5F6368",
+            "accent_color": "#1976D2",
+            "accent_hover": "#1565C0",
+            "border_color": "#E8EAED",
+            "success_color": "#388E3C",
+            "error_color": "#D32F2F",
+            "selection_bg": "#E3F2FD",
+            "selection_fg": "#1565C0"
+        }
+
+def apply_modern_style(widget, widget_type="default", theme_colors=None):
+    """Apply modern styling to tkinter widgets"""
+    if theme_colors is None:
+        theme_colors = get_theme_colors()
+    
+    try:
+        if widget_type == "frame":
+            widget.configure(
+                bg=theme_colors["bg_primary"],
+                relief="flat",
+                borderwidth=0
+            )
+        elif widget_type == "label":
+            widget.configure(
+                bg=theme_colors["bg_primary"],
+                fg=theme_colors["fg_primary"],
+                font=get_system_font(),
+                anchor="w"
+            )
+        elif widget_type == "title_label":
+            widget.configure(
+                bg=theme_colors["bg_primary"],
+                fg=theme_colors["fg_primary"],
+                font=get_title_font(),
+                anchor="w"
+            )
+        elif widget_type == "listbox":
+            widget.configure(
+                bg=theme_colors["bg_primary"],
+                fg=theme_colors["fg_primary"],
+                selectbackground=theme_colors["selection_bg"],
+                selectforeground=theme_colors["selection_fg"],
+                relief="solid",
+                borderwidth=1,
+                highlightthickness=1,
+                highlightcolor=theme_colors["accent_color"],
+                highlightbackground=theme_colors["border_color"],
+                font=get_system_font(),
+                activestyle="none"
+            )
+        elif widget_type == "text":
+            widget.configure(
+                bg=theme_colors["bg_primary"],
+                fg=theme_colors["fg_primary"],
+                selectbackground=theme_colors["selection_bg"],
+                selectforeground=theme_colors["selection_fg"],
+                relief="solid",
+                borderwidth=1,
+                highlightthickness=1,
+                highlightcolor=theme_colors["accent_color"],
+                highlightbackground=theme_colors["border_color"],
+                font=get_text_font(),
+                wrap="word",
+                padx=12,
+                pady=8
+            )
+        elif widget_type == "scrollbar":
+            widget.configure(
+                bg=theme_colors["bg_secondary"],
+                troughcolor=theme_colors["bg_accent"],
+                activebackground=theme_colors["accent_hover"],
+                relief="flat",
+                borderwidth=0,
+                highlightthickness=0
+            )
+    except Exception:
+        pass  # Ignore styling errors on different platforms
+
+def create_modern_button(parent, text, command, button_type="primary", theme_colors=None):
+    """Create a modern styled button"""
+    if theme_colors is None:
+        theme_colors = get_theme_colors()
+    
+    if button_type == "primary":
+        bg_color = theme_colors["accent_color"]
+        fg_color = "#FFFFFF"
+        hover_color = theme_colors["accent_hover"]
+    else:  # secondary
+        bg_color = theme_colors["bg_secondary"]
+        fg_color = theme_colors["fg_primary"]
+        hover_color = theme_colors["bg_accent"]
+    
+    button = tk.Button(
+        parent,
+        text=text,
+        command=command,
+        bg=bg_color,
+        fg=fg_color,
+        font=get_system_font(),
+        relief="flat",
+        borderwidth=0,
+        padx=20,
+        pady=8,
+        cursor="hand2" if IS_WINDOWS else "pointinghand"
+    )
+    
+    # Add hover effects
+    def on_enter(e):
+        button.configure(bg=hover_color)
+    
+    def on_leave(e):
+        button.configure(bg=bg_color)
+    
+    button.bind("<Enter>", on_enter)
+    button.bind("<Leave>", on_leave)
+    
+    return button
+
+def configure_modern_window(window):
+    """Apply modern window styling"""
+    theme_colors = get_theme_colors()
+    
+    try:
+        window.configure(bg=theme_colors["bg_primary"])
+        
+        if IS_WINDOWS:
+            # Windows-specific modern styling
+            try:
+                # Try to remove window decorations for modern look (Windows 10/11)
+                window.overrideredirect(False)  # Keep decorations for better UX
+                window.attributes('-alpha', 0.98)  # Slight transparency
+            except:
+                pass
+        
+        # Apply platform-specific configurations
+        configure_window_for_platform(window)
+        
+    except Exception:
+        pass  # Fallback to basic styling
 
 def configure_macos_app():
     """Configure macOS-specific application settings"""
@@ -100,39 +296,378 @@ def configure_window_for_platform(window):
         print(f"Warning: Platform-specific window configuration failed: {e}")
 
 def create_input_dialog(title: str, prompt: str, default_value: str = "", input_type: str = "text"):
-    """Create an input dialog window - runs in main thread"""
+    """Create a modern input dialog window"""
     try:
-        # Create root window
         root = tk.Tk()
-        root.withdraw()  # Hide main window
-        
-        # Apply platform-specific configurations
-        configure_window_for_platform(root)
-        
-        # Show the dialog
-        if input_type == "text":
-            result = simpledialog.askstring(title, prompt, parent=root, initialvalue=default_value)
-        elif input_type == "integer":
-            try:
-                initial = int(default_value) if default_value else 0
-            except:
-                initial = 0
-            result = simpledialog.askinteger(title, prompt, parent=root, initialvalue=initial)
-        elif input_type == "float":
-            try:
-                initial = float(default_value) if default_value else 0.0
-            except:
-                initial = 0.0
-            result = simpledialog.askfloat(title, prompt, parent=root, initialvalue=initial)
-        else:
-            result = simpledialog.askstring(title, prompt, parent=root, initialvalue=default_value)
-        
+        root.withdraw()
+        dialog = ModernInputDialog(root, title, prompt, default_value, input_type)
+        result = dialog.result
         root.destroy()
         return result
-        
     except Exception as e:
         print(f"Error in input dialog: {e}")
         return None
+
+def show_confirmation(title: str, message: str):
+    """Show modern confirmation dialog"""
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        dialog = ModernConfirmationDialog(root, title, message)
+        result = dialog.result
+        root.destroy()
+        return result
+    except Exception as e:
+        print(f"Error in confirmation dialog: {e}")
+        return False
+
+def show_info(title: str, message: str):
+    """Show modern info dialog"""
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        dialog = ModernInfoDialog(root, title, message)
+        result = dialog.result
+        root.destroy()
+        return result
+    except Exception as e:
+        print(f"Error in info dialog: {e}")
+        return False
+
+class ModernInputDialog:
+    def __init__(self, parent, title, prompt, default_value="", input_type="text"):
+        self.result = None
+        self.input_type = input_type
+        
+        # Get theme colors
+        self.theme_colors = get_theme_colors()
+        
+        # Create the dialog window
+        self.dialog = tk.Toplevel(parent)
+        self.dialog.title(title)
+        self.dialog.grab_set()
+        self.dialog.resizable(False, False)
+        
+        # Apply modern window styling
+        configure_modern_window(self.dialog)
+        
+        # Set size based on platform
+        if IS_WINDOWS:
+            self.dialog.geometry("420x280")
+        else:
+            self.dialog.geometry("400x260")
+        
+        self.center_window()
+        
+        # Create the main frame
+        main_frame = tk.Frame(self.dialog, bg=self.theme_colors["bg_primary"])
+        main_frame.pack(fill="both", expand=True, padx=24, pady=20)
+        
+        # Title label
+        title_label = tk.Label(
+            main_frame,
+            text=title,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_primary"],
+            font=get_title_font(),
+            anchor="w"
+        )
+        title_label.pack(fill="x", pady=(0, 8))
+        
+        # Prompt label
+        prompt_label = tk.Label(
+            main_frame,
+            text=prompt,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_secondary"],
+            font=get_system_font(),
+            wraplength=350,
+            justify="left",
+            anchor="w"
+        )
+        prompt_label.pack(fill="x", pady=(0, 20))
+        
+        # Input field
+        input_frame = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        input_frame.pack(fill="x", pady=(0, 24))
+        
+        self.entry = tk.Entry(
+            input_frame,
+            font=get_system_font(),
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_primary"],
+            relief="solid",
+            borderwidth=1,
+            highlightthickness=1,
+            highlightcolor=self.theme_colors["accent_color"],
+            highlightbackground=self.theme_colors["border_color"],
+            insertbackground=self.theme_colors["accent_color"]
+        )
+        self.entry.pack(fill="x", ipady=8, ipadx=12)
+        
+        if default_value:
+            self.entry.insert(0, default_value)
+            self.entry.select_range(0, tk.END)
+        
+        # Button frame
+        button_frame = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        button_frame.pack(fill="x")
+        
+        # Create modern buttons
+        self.ok_button = create_modern_button(
+            button_frame, "OK", self.ok_clicked, "primary", self.theme_colors
+        )
+        self.ok_button.pack(side=tk.RIGHT, padx=(8, 0))
+        
+        self.cancel_button = create_modern_button(
+            button_frame, "Cancel", self.cancel_clicked, "secondary", self.theme_colors
+        )
+        self.cancel_button.pack(side=tk.RIGHT)
+        
+        # Handle window close and keyboard shortcuts
+        self.dialog.protocol("WM_DELETE_WINDOW", self.cancel_clicked)
+        self.dialog.bind('<Return>', lambda e: self.ok_clicked())
+        self.dialog.bind('<Escape>', lambda e: self.cancel_clicked())
+        
+        # Focus on entry
+        self.entry.focus_set()
+        
+        # Wait for dialog completion
+        self.dialog.wait_window()
+    
+    def center_window(self):
+        """Center the dialog window on screen"""
+        self.dialog.update_idletasks()
+        width = self.dialog.winfo_width()
+        height = self.dialog.winfo_height()
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        
+        if IS_MACOS:
+            y = max(50, y - 50)
+        elif IS_WINDOWS:
+            y = max(30, y - 30)
+            
+        self.dialog.geometry(f"{width}x{height}+{x}+{y}")
+    
+    def ok_clicked(self):
+        value = self.entry.get()
+        if self.input_type == "integer":
+            try:
+                self.result = int(value) if value else None
+            except ValueError:
+                self.result = None
+        elif self.input_type == "float":
+            try:
+                self.result = float(value) if value else None
+            except ValueError:
+                self.result = None
+        else:
+            self.result = value if value else None
+        self.dialog.destroy()
+    
+    def cancel_clicked(self):
+        self.result = None
+        self.dialog.destroy()
+
+class ModernConfirmationDialog:
+    def __init__(self, parent, title, message):
+        self.result = False
+        
+        # Get theme colors
+        self.theme_colors = get_theme_colors()
+        
+        # Create the dialog window
+        self.dialog = tk.Toplevel(parent)
+        self.dialog.title(title)
+        self.dialog.grab_set()
+        self.dialog.resizable(False, False)
+        
+        # Apply modern window styling
+        configure_modern_window(self.dialog)
+        
+        # Set size based on content
+        if IS_WINDOWS:
+            self.dialog.geometry("440x220")
+        else:
+            self.dialog.geometry("420x200")
+        
+        self.center_window()
+        
+        # Create the main frame
+        main_frame = tk.Frame(self.dialog, bg=self.theme_colors["bg_primary"])
+        main_frame.pack(fill="both", expand=True, padx=24, pady=20)
+        
+        # Title label
+        title_label = tk.Label(
+            main_frame,
+            text=title,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_primary"],
+            font=get_title_font(),
+            anchor="w"
+        )
+        title_label.pack(fill="x", pady=(0, 12))
+        
+        # Message label
+        message_label = tk.Label(
+            main_frame,
+            text=message,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_secondary"],
+            font=get_system_font(),
+            wraplength=370,
+            justify="left",
+            anchor="w"
+        )
+        message_label.pack(fill="x", pady=(0, 24))
+        
+        # Button frame
+        button_frame = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        button_frame.pack(fill="x")
+        
+        # Create modern buttons
+        self.yes_button = create_modern_button(
+            button_frame, "Yes", self.yes_clicked, "primary", self.theme_colors
+        )
+        self.yes_button.pack(side=tk.RIGHT, padx=(8, 0))
+        
+        self.no_button = create_modern_button(
+            button_frame, "No", self.no_clicked, "secondary", self.theme_colors
+        )
+        self.no_button.pack(side=tk.RIGHT)
+        
+        # Handle window close and keyboard shortcuts
+        self.dialog.protocol("WM_DELETE_WINDOW", self.no_clicked)
+        self.dialog.bind('<Return>', lambda e: self.yes_clicked())
+        self.dialog.bind('<Escape>', lambda e: self.no_clicked())
+        
+        # Focus on No button by default (safer)
+        self.no_button.focus_set()
+        
+        # Wait for dialog completion
+        self.dialog.wait_window()
+    
+    def center_window(self):
+        """Center the dialog window on screen"""
+        self.dialog.update_idletasks()
+        width = self.dialog.winfo_width()
+        height = self.dialog.winfo_height()
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        
+        if IS_MACOS:
+            y = max(50, y - 50)
+        elif IS_WINDOWS:
+            y = max(30, y - 30)
+            
+        self.dialog.geometry(f"{width}x{height}+{x}+{y}")
+    
+    def yes_clicked(self):
+        self.result = True
+        self.dialog.destroy()
+    
+    def no_clicked(self):
+        self.result = False
+        self.dialog.destroy()
+
+class ModernInfoDialog:
+    def __init__(self, parent, title, message):
+        self.result = True
+        
+        # Get theme colors
+        self.theme_colors = get_theme_colors()
+        
+        # Create the dialog window
+        self.dialog = tk.Toplevel(parent)
+        self.dialog.title(title)
+        self.dialog.grab_set()
+        self.dialog.resizable(False, False)
+        
+        # Apply modern window styling
+        configure_modern_window(self.dialog)
+        
+        # Set size based on content
+        if IS_WINDOWS:
+            self.dialog.geometry("420x200")
+        else:
+            self.dialog.geometry("400x180")
+        
+        self.center_window()
+        
+        # Create the main frame
+        main_frame = tk.Frame(self.dialog, bg=self.theme_colors["bg_primary"])
+        main_frame.pack(fill="both", expand=True, padx=24, pady=20)
+        
+        # Title label
+        title_label = tk.Label(
+            main_frame,
+            text=title,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_primary"],
+            font=get_title_font(),
+            anchor="w"
+        )
+        title_label.pack(fill="x", pady=(0, 12))
+        
+        # Message label
+        message_label = tk.Label(
+            main_frame,
+            text=message,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_secondary"],
+            font=get_system_font(),
+            wraplength=350,
+            justify="left",
+            anchor="w"
+        )
+        message_label.pack(fill="x", pady=(0, 24))
+        
+        # Button frame
+        button_frame = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        button_frame.pack(fill="x")
+        
+        # Create modern OK button
+        self.ok_button = create_modern_button(
+            button_frame, "OK", self.ok_clicked, "primary", self.theme_colors
+        )
+        self.ok_button.pack(side=tk.RIGHT)
+        
+        # Handle window close and keyboard shortcuts
+        self.dialog.protocol("WM_DELETE_WINDOW", self.ok_clicked)
+        self.dialog.bind('<Return>', lambda e: self.ok_clicked())
+        self.dialog.bind('<Escape>', lambda e: self.ok_clicked())
+        
+        # Focus on OK button
+        self.ok_button.focus_set()
+        
+        # Wait for dialog completion
+        self.dialog.wait_window()
+    
+    def center_window(self):
+        """Center the dialog window on screen"""
+        self.dialog.update_idletasks()
+        width = self.dialog.winfo_width()
+        height = self.dialog.winfo_height()
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        x = (screen_width // 2) - (width // 2)
+        y = (screen_height // 2) - (height // 2)
+        
+        if IS_MACOS:
+            y = max(50, y - 50)
+        elif IS_WINDOWS:
+            y = max(30, y - 30)
+            
+        self.dialog.geometry(f"{width}x{height}+{x}+{y}")
+    
+    def ok_clicked(self):
+        self.result = True
+        self.dialog.destroy()
 
 def create_choice_dialog(title: str, prompt: str, choices: List[str], allow_multiple: bool = False):
     """Create a choice dialog window"""
@@ -190,66 +725,98 @@ class ChoiceDialog:
     def __init__(self, parent, title, prompt, choices, allow_multiple=False):
         self.result = None
         
+        # Get theme colors
+        self.theme_colors = get_theme_colors()
+        
         # Create the dialog window
         self.dialog = tk.Toplevel(parent)
         self.dialog.title(title)
         self.dialog.grab_set()
         self.dialog.resizable(True, True)
         
-        # Apply platform-specific configurations
-        configure_window_for_platform(self.dialog)
+        # Apply modern window styling
+        configure_modern_window(self.dialog)
         
         # Set size based on platform
         if IS_MACOS:
-            self.dialog.geometry("460x360")
+            self.dialog.geometry("480x400")
+        elif IS_WINDOWS:
+            self.dialog.geometry("500x420")
         else:
             self.dialog.geometry("450x350")
         
         self.center_window()
         
-        # Create the main frame with system font
-        main_frame = ttk.Frame(self.dialog, padding="15")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Create the main frame with modern styling
+        main_frame = tk.Frame(self.dialog, bg=self.theme_colors["bg_primary"])
+        main_frame.pack(fill="both", expand=True, padx=24, pady=20)
         
         # Configure grid weights
-        self.dialog.columnconfigure(0, weight=1)
-        self.dialog.rowconfigure(0, weight=1)
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)
         
-        # Add prompt label with system font
-        system_font = get_system_font()
-        prompt_label = ttk.Label(main_frame, text=prompt, wraplength=400, font=system_font)
-        prompt_label.grid(row=0, column=0, pady=(0, 15), sticky=(tk.W, tk.E))
+        # Add modern title label
+        title_label = tk.Label(
+            main_frame, 
+            text=title,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_primary"],
+            font=get_title_font(),
+            anchor="w"
+        )
+        title_label.grid(row=0, column=0, sticky="ew", pady=(0, 8))
         
-        # Create choice selection widget
-        list_frame = ttk.Frame(main_frame)
-        list_frame.grid(row=1, column=0, pady=(0, 15), sticky=(tk.W, tk.E, tk.N, tk.S))
-        list_frame.columnconfigure(0, weight=1)
-        list_frame.rowconfigure(0, weight=1)
+        # Add prompt label with modern styling
+        prompt_label = tk.Label(
+            main_frame,
+            text=prompt,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_secondary"],
+            font=get_system_font(),
+            wraplength=450,
+            justify="left",
+            anchor="w"
+        )
+        prompt_label.grid(row=1, column=0, sticky="ew", pady=(0, 20))
         
-        # Use Listbox for selection with system font
+        # Create choice selection widget with modern container
+        list_container = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        list_container.grid(row=2, column=0, sticky="nsew", pady=(0, 24))
+        list_container.columnconfigure(0, weight=1)
+        list_container.rowconfigure(0, weight=1)
+        
+        # Modern listbox with styling
         if allow_multiple:
-            self.listbox = tk.Listbox(list_frame, selectmode=tk.MULTIPLE, height=10, font=system_font)
+            self.listbox = tk.Listbox(list_container, selectmode=tk.MULTIPLE, height=8)
         else:
-            self.listbox = tk.Listbox(list_frame, selectmode=tk.SINGLE, height=10, font=system_font)
-            
+            self.listbox = tk.Listbox(list_container, selectmode=tk.SINGLE, height=8)
+        
+        apply_modern_style(self.listbox, "listbox", self.theme_colors)
+        
         for choice in choices:
             self.listbox.insert(tk.END, choice)
-        self.listbox.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.listbox.grid(row=0, column=0, sticky="nsew", padx=(0, 2))
         
-        # Add scrollbar
-        scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.listbox.yview)
-        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        # Modern scrollbar
+        scrollbar = tk.Scrollbar(list_container, orient="vertical", command=self.listbox.yview)
+        apply_modern_style(scrollbar, "scrollbar", self.theme_colors)
+        scrollbar.grid(row=0, column=1, sticky="ns")
         self.listbox.configure(yscrollcommand=scrollbar.set)
         
-        # Button frame
-        button_frame = ttk.Frame(main_frame)
-        button_frame.grid(row=2, column=0, pady=(15, 0))
+        # Modern button frame
+        button_frame = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        button_frame.grid(row=3, column=0, sticky="ew")
         
-        # OK and Cancel buttons
-        ttk.Button(button_frame, text="OK", command=self.ok_clicked).pack(side=tk.LEFT, padx=(0, 10))
-        ttk.Button(button_frame, text="Cancel", command=self.cancel_clicked).pack(side=tk.LEFT)
+        # Create modern buttons
+        self.ok_button = create_modern_button(
+            button_frame, "OK", self.ok_clicked, "primary", self.theme_colors
+        )
+        self.ok_button.pack(side=tk.RIGHT, padx=(8, 0))
+        
+        self.cancel_button = create_modern_button(
+            button_frame, "Cancel", self.cancel_clicked, "secondary", self.theme_colors
+        )
+        self.cancel_button.pack(side=tk.RIGHT)
         
         # Handle window close
         self.dialog.protocol("WM_DELETE_WINDOW", self.cancel_clicked)
@@ -261,8 +828,11 @@ class ChoiceDialog:
         
         # Platform-specific final setup
         if IS_MACOS:
-            # Additional macOS focus handling
             self.dialog.after(100, lambda: self.listbox.focus_set())
+        
+        # Add keyboard shortcuts
+        self.dialog.bind('<Return>', lambda e: self.ok_clicked())
+        self.dialog.bind('<Escape>', lambda e: self.cancel_clicked())
         
         # Wait for the dialog to complete
         self.dialog.wait_window()
@@ -283,8 +853,9 @@ class ChoiceDialog:
         
         # Platform-specific adjustments
         if IS_MACOS:
-            # Account for macOS menu bar
             y = max(50, y - 50)
+        elif IS_WINDOWS:
+            y = max(30, y - 30)
         
         self.dialog.geometry(f"{width}x{height}+{x}+{y}")
     
@@ -303,71 +874,95 @@ class MultilineInputDialog:
     def __init__(self, parent, title, prompt, default_value=""):
         self.result = None
         
+        # Get theme colors
+        self.theme_colors = get_theme_colors()
+        
         # Create the dialog window
         self.dialog = tk.Toplevel(parent)
         self.dialog.title(title)
         self.dialog.grab_set()
         self.dialog.resizable(True, True)
         
-        # Apply platform-specific configurations
-        configure_window_for_platform(self.dialog)
+        # Apply modern window styling
+        configure_modern_window(self.dialog)
         
         # Set size based on platform
         if IS_MACOS:
-            self.dialog.geometry("560x460")
+            self.dialog.geometry("580x480")
+        elif IS_WINDOWS:
+            self.dialog.geometry("600x500")
         else:
             self.dialog.geometry("550x450")
         
         self.center_window()
         
-        # Create the main frame
-        main_frame = ttk.Frame(self.dialog, padding="15")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Create the main frame with modern styling
+        main_frame = tk.Frame(self.dialog, bg=self.theme_colors["bg_primary"])
+        main_frame.pack(fill="both", expand=True, padx=24, pady=20)
         
         # Configure grid weights
-        self.dialog.columnconfigure(0, weight=1)
-        self.dialog.rowconfigure(0, weight=1)
         main_frame.columnconfigure(0, weight=1)
-        main_frame.rowconfigure(1, weight=1)
+        main_frame.rowconfigure(2, weight=1)
         
-        # Add prompt label with system font
-        system_font = get_system_font()
-        prompt_label = ttk.Label(main_frame, text=prompt, wraplength=500, font=system_font)
-        prompt_label.grid(row=0, column=0, pady=(0, 15), sticky=(tk.W, tk.E))
+        # Add modern title label
+        title_label = tk.Label(
+            main_frame,
+            text=title,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_primary"],
+            font=get_title_font(),
+            anchor="w"
+        )
+        title_label.grid(row=0, column=0, sticky="ew", pady=(0, 8))
         
-        # Create text widget with scrollbar
-        text_frame = ttk.Frame(main_frame)
-        text_frame.grid(row=1, column=0, pady=(0, 15), sticky=(tk.W, tk.E, tk.N, tk.S))
-        text_frame.columnconfigure(0, weight=1)
-        text_frame.rowconfigure(0, weight=1)
+        # Add prompt label with modern styling
+        prompt_label = tk.Label(
+            main_frame,
+            text=prompt,
+            bg=self.theme_colors["bg_primary"],
+            fg=self.theme_colors["fg_secondary"],
+            font=get_system_font(),
+            wraplength=520,
+            justify="left",
+            anchor="w"
+        )
+        prompt_label.grid(row=1, column=0, sticky="ew", pady=(0, 20))
         
-        # Use appropriate font for text widget
-        if IS_MACOS:
-            text_font = ("Monaco", 12)  # macOS monospace font
-        elif IS_WINDOWS:
-            text_font = ("Consolas", 10)  # Windows monospace font
-        else:
-            text_font = ("Ubuntu Mono", 10)  # Linux monospace font
+        # Create text widget container with modern styling
+        text_container = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        text_container.grid(row=2, column=0, sticky="nsew", pady=(0, 24))
+        text_container.columnconfigure(0, weight=1)
+        text_container.rowconfigure(0, weight=1)
         
-        self.text_widget = tk.Text(text_frame, wrap=tk.WORD, height=15, font=text_font)
-        self.text_widget.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Modern text widget
+        self.text_widget = tk.Text(text_container, height=12)
+        apply_modern_style(self.text_widget, "text", self.theme_colors)
+        self.text_widget.grid(row=0, column=0, sticky="nsew", padx=(0, 2))
         
-        # Add scrollbar
-        scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=self.text_widget.yview)
-        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
-        self.text_widget.configure(yscrollcommand=scrollbar.set)
+        # Modern scrollbar for text widget
+        text_scrollbar = tk.Scrollbar(text_container, orient="vertical", command=self.text_widget.yview)
+        apply_modern_style(text_scrollbar, "scrollbar", self.theme_colors)
+        text_scrollbar.grid(row=0, column=1, sticky="ns")
+        self.text_widget.configure(yscrollcommand=text_scrollbar.set)
         
-        # Set default value
+        # Set default value with better formatting
         if default_value:
             self.text_widget.insert("1.0", default_value)
         
-        # Button frame
-        button_frame = ttk.Frame(main_frame)
-        button_frame.grid(row=2, column=0, pady=(15, 0))
+        # Modern button frame
+        button_frame = tk.Frame(main_frame, bg=self.theme_colors["bg_primary"])
+        button_frame.grid(row=3, column=0, sticky="ew")
         
-        # OK and Cancel buttons
-        ttk.Button(button_frame, text="OK", command=self.ok_clicked).pack(side=tk.LEFT, padx=(0, 10))
-        ttk.Button(button_frame, text="Cancel", command=self.cancel_clicked).pack(side=tk.LEFT)
+        # Create modern buttons
+        self.ok_button = create_modern_button(
+            button_frame, "OK", self.ok_clicked, "primary", self.theme_colors
+        )
+        self.ok_button.pack(side=tk.RIGHT, padx=(8, 0))
+        
+        self.cancel_button = create_modern_button(
+            button_frame, "Cancel", self.cancel_clicked, "secondary", self.theme_colors
+        )
+        self.cancel_button.pack(side=tk.RIGHT)
         
         # Handle window close
         self.dialog.protocol("WM_DELETE_WINDOW", self.cancel_clicked)
@@ -377,8 +972,11 @@ class MultilineInputDialog:
         
         # Platform-specific final setup
         if IS_MACOS:
-            # Additional macOS focus handling
             self.dialog.after(100, lambda: self.text_widget.focus_set())
+        
+        # Add keyboard shortcuts
+        self.dialog.bind('<Control-Return>', lambda e: self.ok_clicked())
+        self.dialog.bind('<Escape>', lambda e: self.cancel_clicked())
         
         # Wait for the dialog to complete
         self.dialog.wait_window()
@@ -399,8 +997,9 @@ class MultilineInputDialog:
         
         # Platform-specific adjustments
         if IS_MACOS:
-            # Account for macOS menu bar
             y = max(50, y - 50)
+        elif IS_WINDOWS:
+            y = max(30, y - 30)
         
         self.dialog.geometry(f"{width}x{height}+{x}+{y}")
     
@@ -707,6 +1306,119 @@ async def show_info_message(
             "platform": CURRENT_PLATFORM
         }
 
+# Add a tool to get prompting guidance for LLMs
+@mcp.tool()
+async def get_human_loop_prompt() -> Dict[str, str]:
+    """
+    Get prompting guidance for LLMs on when and how to use human-in-the-loop tools.
+    
+    This tool returns comprehensive guidance that helps LLMs understand when to pause
+    and ask for human input, decisions, or feedback during task execution.
+    """
+    guidance = {
+        "main_prompt": """
+You have access to Human-in-the-Loop tools that allow you to interact directly with users through GUI dialogs. Use these tools strategically to enhance task completion and user experience.
+
+**WHEN TO USE HUMAN-IN-THE-LOOP TOOLS:**
+
+1. **Ambiguous Requirements** - When user instructions are unclear or could have multiple interpretations
+2. **Decision Points** - When you need user preference between valid alternatives
+3. **Creative Input** - For subjective choices like design, content style, or personal preferences
+4. **Sensitive Operations** - Before executing potentially destructive or irreversible actions
+5. **Missing Information** - When you need specific details not provided in the original request
+6. **Quality Feedback** - To get user validation on intermediate results before proceeding
+7. **Error Handling** - When encountering issues that require user guidance to resolve
+
+**AVAILABLE TOOLS:**
+- `get_user_input` - Single-line text/number input (names, values, paths, etc.)
+- `get_user_choice` - Multiple choice selection (pick from options)
+- `get_multiline_input` - Long-form text (descriptions, code, documents)
+- `show_confirmation_dialog` - Yes/No decisions (confirmations, approvals)
+- `show_info_message` - Status updates and notifications
+
+**BEST PRACTICES:**
+- Ask specific, clear questions with context
+- Provide helpful default values when possible
+- Use confirmation dialogs before destructive actions
+- Give status updates for long-running processes
+- Offer meaningful choices rather than overwhelming options
+- Be concise but informative in dialog prompts""",
+        
+        "usage_examples": """
+**EXAMPLE SCENARIOS:**
+
+1. **File Operations:**
+   - "I'm about to delete 15 files. Should I proceed?" (confirmation)
+   - "Enter the target directory path:" (input)
+   - "Choose backup format: Full, Incremental, Differential" (choice)
+
+2. **Content Creation:**
+   - "What tone should I use: Professional, Casual, Friendly?" (choice)
+   - "Please provide any specific requirements:" (multiline input)
+   - "Content generated successfully!" (info message)
+
+3. **Code Development:**
+   - "Enter the API endpoint URL:" (input)
+   - "Select framework: React, Vue, Angular, Vanilla JS" (choice)
+   - "Review the generated code and provide feedback:" (multiline input)
+
+4. **Data Processing:**
+   - "Found 3 data formats. Which should I use?" (choice)
+   - "Enter the date range (YYYY-MM-DD to YYYY-MM-DD):" (input)
+   - "Processing complete. 1,250 records updated." (info message)""",
+        
+        "decision_framework": """
+**DECISION FRAMEWORK FOR HUMAN-IN-THE-LOOP:**
+
+ASK YOURSELF:
+1. Is this decision subjective or preference-based? → USE CHOICE DIALOG
+2. Do I need specific information not provided? → USE INPUT DIALOG  
+3. Could this action cause problems if wrong? → USE CONFIRMATION DIALOG
+4. Is this a long process the user should know about? → USE INFO MESSAGE
+5. Do I need detailed explanation or content? → USE MULTILINE INPUT
+
+AVOID OVERUSE:
+- Don't ask for information already provided
+- Don't seek confirmation for obviously safe operations
+- Don't interrupt flow for trivial decisions
+- Don't ask multiple questions when one comprehensive dialog would suffice
+
+OPTIMIZE FOR USER EXPERIENCE:
+- Batch related questions together when possible
+- Provide context for why you need the information
+- Offer sensible defaults and suggestions
+- Make dialogs self-explanatory and actionable""",
+        
+        "integration_tips": """
+**INTEGRATION TIPS:**
+
+1. **Workflow Integration:**
+   ```
+   Step 1: Analyze user request
+   Step 2: Identify decision points and missing info
+   Step 3: Use appropriate human-in-the-loop tools
+   Step 4: Process user responses
+   Step 5: Continue with enhanced information
+   ```
+
+2. **Error Recovery:**
+   - If user cancels, gracefully explain and offer alternatives
+   - Handle timeouts by providing default behavior
+   - Always validate user input before proceeding
+
+3. **Progressive Enhancement:**
+   - Start with automated solutions
+   - Add human input only where it adds clear value
+   - Learn from user patterns to improve future automation
+
+4. **Communication:**
+   - Explain why you need user input
+   - Show progress and intermediate results
+   - Confirm successful completion of user-guided actions"""
+    }
+    
+    return guidance
+
 # Add a health check tool
 @mcp.tool()
 async def health_check() -> Dict[str, Any]:
@@ -735,7 +1447,8 @@ async def health_check() -> Dict[str, Any]:
                 "get_user_choice", 
                 "get_multiline_input",
                 "show_confirmation_dialog",
-                "show_info_message"
+                "show_info_message",
+                "get_human_loop_prompt"
             ]
         }
     except Exception as e:
@@ -758,6 +1471,7 @@ if __name__ == "__main__":
     print("get_multiline_input - Get multi-line text from user")
     print("show_confirmation_dialog - Ask user for yes/no confirmation")
     print("show_info_message - Display information to user")
+    print("get_human_loop_prompt - Get guidance on when to use human-in-the-loop tools")
     print("health_check - Check server status")
     print("")
     
@@ -766,17 +1480,18 @@ if __name__ == "__main__":
         print("macOS detected - Using native system fonts and window management")
         print("Note: You may need to allow Python to control your computer in System Preferences > Security & Privacy > Accessibility")
     elif IS_WINDOWS:
-        print("Windows detected - Using Windows-optimized GUI settings")
+        print("Windows detected - Using modern Windows 11-style GUI with enhanced styling")
+        print("Features: Modern colors, improved fonts, hover effects, and sleek design")
     elif IS_LINUX:
-        print("Linux detected - Using Linux-compatible GUI settings")
+        print("Linux detected - Using Linux-compatible GUI settings with modern styling")
     
     # Test GUI availability
     if ensure_gui_initialized():
-        print("✓ GUI system initialized successfully")
+        print(" GUI system initialized successfully")
         if IS_MACOS:
-            print("✓ macOS GUI optimizations applied")
+            print(" macOS GUI optimizations applied")
     else:
-        print("⚠ Warning: GUI system may not be available")
+        print(" Warning: GUI system may not be available")
     
     print("")
     print("Starting MCP server...")
