@@ -1306,8 +1306,8 @@ async def show_info_message(
             "platform": CURRENT_PLATFORM
         }
 
-# Add a tool to get prompting guidance for LLMs
-@mcp.tool()
+# Add a prompt to get prompting guidance for LLMs
+@mcp.prompt()
 async def get_human_loop_prompt() -> Dict[str, str]:
     """
     Get prompting guidance for LLMs on when and how to use human-in-the-loop tools.
@@ -1460,7 +1460,8 @@ async def health_check() -> Dict[str, Any]:
         }
 
 # Main execution
-if __name__ == "__main__":
+
+def main():
     print("Starting Human-in-the-Loop MCP Server...")
     print("This server provides tools for LLMs to interact with humans through GUI dialogs.")
     print(f"Platform: {CURRENT_PLATFORM} ({platform.system()} {platform.release()})")
@@ -1498,3 +1499,6 @@ if __name__ == "__main__":
     
     # Run the server
     mcp.run()
+
+if __name__ == "__main__":
+    main()

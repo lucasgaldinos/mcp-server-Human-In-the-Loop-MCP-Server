@@ -3,11 +3,11 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "human-in-the-loop-mcp"
-version = "0.1.0"
+name = "hitl-mcp-server"
+version = "0.1.1"
 description = "Human-In-the-Loop MCP Server - Enable AI assistants to interact with humans through GUI dialogs"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 license = {text = "MIT"}
 authors = [
     {name = "GongRzhe", email = "gongrzhe@gmail.com"},
@@ -42,7 +42,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: User Interfaces",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: System :: Human Machine Interfaces",
 ]
 dependencies = [
     "fastmcp>=0.1.0",
@@ -66,7 +65,8 @@ test = [
 ]
 
 [project.scripts]
-human-loop-mcp = "human_loop_server:main"
+hitl-mcp-server = "human_loop_server:main"
+hitl_mcp_server = "human_loop_server:main"
 
 [project.urls]
 Homepage = "https://github.com/GongRzhe/Human-In-the-Loop-MCP-Server"
