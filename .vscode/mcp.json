@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "human-in-the-loop-dev": {
+            "args": [
+                "--from",
+                "/home/lucas_galdino/repositories/mcp_servers/human-in-the-loop",
+                "hitl-mcp-server"
+            ],
+            "command": "uvx",
+            "type": "stdio"
+        },
+    }
+}
