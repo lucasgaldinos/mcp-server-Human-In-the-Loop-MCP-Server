@@ -1,11 +1,12 @@
 {
     "servers": {
         "human-in-the-loop": {
-            "command": "uv",
+            // Explicitly uses original-project branch for modular architecture + enhanced tool guidance
+            // This ensures consistent behavior regardless of current working branch
+            "command": "bash",
             "args": [
-                "run",
-                "python",
-                "human_loop_server.py"
+                "-c",
+                "cd /home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server && git checkout original-project && uv run python human_loop_server.py"
             ],
             "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
             "type": "stdio"
