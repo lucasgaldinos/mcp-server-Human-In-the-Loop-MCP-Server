@@ -6,7 +6,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cd /home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server && git checkout original-project && uv run python human_loop_server.py"
+                "cd /home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server && git checkout original-project && uv run human_loop_server.py"
             ],
             "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
             "type": "stdio"
