@@ -11,6 +11,7 @@ A powerful **Model Context Protocol (MCP) Server** that enables AI assistants li
 ## 🚀 Features
 
 ### 💬 Interactive Dialog Tools
+
 - **Text Input**: Get text, numbers, or other data from users with validation
 - **Multiple Choice**: Present options for single or multiple selections  
 - **Multi-line Input**: Collect longer text content, code, or detailed descriptions
@@ -19,11 +20,13 @@ A powerful **Model Context Protocol (MCP) Server** that enables AI assistants li
 - **Health Check**: Monitor server status and GUI availability
 
 ### 🎨 Modern Cross-Platform GUI
+
 - **Windows**: Modern Windows 11-style interface with beautiful styling, hover effects, and enhanced visual design
 - **macOS**: Native macOS experience with SF Pro Display fonts and proper window management
 - **Linux**: Ubuntu-compatible GUI with modern styling and system fonts
 
 ### ⚡ Advanced Features
+
 - **Non-blocking Operation**: All dialogs run in separate threads to prevent blocking
 - **Timeout Protection**: Configurable 5-minute timeouts prevent hanging operations
 - **Platform Detection**: Automatic optimization for each operating system
@@ -112,21 +115,23 @@ To use this server with Claude Desktop, add the following configuration to your 
 
 **Note:** You may need to allow Python to control your computer in **System Preferences > Security & Privacy > Accessibility** for the GUI dialogs to work properly.
 
-
 After updating the configuration, restart Claude Desktop for the changes to take effect.
 
 ## 🛠️ Available Tools
 
 ### 1. `get_user_input`
+
 Get single-line text, numbers, or other data from users.
 
 **Parameters:**
+
 - `title` (str): Dialog window title
 - `prompt` (str): Question/prompt text  
 - `default_value` (str): Pre-filled value (optional)
 - `input_type` (str): "text", "integer", or "float" (default: "text")
 
 **Example Usage:**
+
 ```python
 result = await get_user_input(
     title="Project Setup",
@@ -137,15 +142,18 @@ result = await get_user_input(
 ```
 
 ### 2. `get_user_choice`
+
 Present multiple options for user selection.
 
 **Parameters:**
+
 - `title` (str): Dialog window title
 - `prompt` (str): Question/prompt text
 - `choices` (List[str]): Available options
 - `allow_multiple` (bool): Allow multiple selections (default: false)
 
 **Example Usage:**
+
 ```python
 result = await get_user_choice(
     title="Framework Selection",
@@ -156,14 +164,17 @@ result = await get_user_choice(
 ```
 
 ### 3. `get_multiline_input`
+
 Collect longer text content, code, or detailed descriptions.
 
 **Parameters:**
+
 - `title` (str): Dialog window title
 - `prompt` (str): Question/prompt text
 - `default_value` (str): Pre-filled text (optional)
 
 **Example Usage:**
+
 ```python
 result = await get_multiline_input(
     title="Code Review",
@@ -173,13 +184,16 @@ result = await get_multiline_input(
 ```
 
 ### 4. `show_confirmation_dialog`
+
 Ask for yes/no confirmation before proceeding.
 
 **Parameters:**
+
 - `title` (str): Dialog window title
 - `message` (str): Confirmation message
 
 **Example Usage:**
+
 ```python
 result = await show_confirmation_dialog(
     title="Delete Confirmation",
@@ -188,13 +202,16 @@ result = await show_confirmation_dialog(
 ```
 
 ### 5. `show_info_message`
+
 Display information, notifications, or status updates.
 
 **Parameters:**
+
 - `title` (str): Dialog window title
 - `message` (str): Information message
 
 **Example Usage:**
+
 ```python
 result = await show_info_message(
     title="Process Complete",
@@ -203,9 +220,11 @@ result = await show_info_message(
 ```
 
 ### 6. `health_check`
+
 Check server status and GUI availability.
 
 **Example Usage:**
+
 ```python
 status = await health_check()
 # Returns detailed platform and functionality information
@@ -226,12 +245,14 @@ All tools return structured JSON responses:
 ```
 
 **Common Response Fields:**
+
 - `success` (bool): Whether the operation completed successfully
 - `cancelled` (bool): Whether the user cancelled the dialog
 - `platform` (str): Operating system platform
 - `error` (str): Error message if operation failed
 
 **Tool-Specific Fields:**
+
 - **get_user_input**: `user_input`, `input_type`
 - **get_user_choice**: `selected_choice`, `selected_choices`, `allow_multiple`
 - **get_multiline_input**: `user_input`, `character_count`, `line_count`
@@ -252,6 +273,7 @@ All tools return structured JSON responses:
 ### Example Integration Patterns
 
 #### File Operations
+
 ```python
 # Get target directory
 location = await get_user_input(
@@ -279,6 +301,7 @@ if confirmed['confirmed']:
 ```
 
 #### Content Creation
+
 ```python
 # Get content requirements
 requirements = await get_multiline_input(
@@ -303,27 +326,32 @@ await show_info_message("Content Ready", "Your content has been generated succes
 ### Common Issues
 
 **GUI Not Appearing**
+
 - Verify you're running in a desktop environment (not headless server)
 - Check if tkinter is installed: `python -c "import tkinter"`
 - Run health check: `health_check()` tool to diagnose issues
 
 **Permission Errors (macOS)**
+
 - Grant accessibility permissions in System Preferences > Security & Privacy > Accessibility
 - Allow Python to control your computer
 - Restart terminal after granting permissions
 
 **Import Errors**
+
 - Ensure package is installed: `pip install hitl-mcp-server`
 - Check Python version compatibility (>=3.8 required)
 - Verify virtual environment activation if using one
 
 **Claude Desktop Integration Issues**
+
 - Check configuration file syntax and location
 - Restart Claude Desktop after configuration changes
 - Verify uvx is installed: `pip install uvx`
 - Test server manually: `uvx hitl-mcp-server`
 
 **Dialog Timeout**
+
 - Default timeout is 5 minutes (300 seconds)
 - Dialogs will return with cancelled=true if user doesn't respond
 - Ensure user is present when dialogs are triggered
@@ -331,6 +359,7 @@ await show_info_message("Content Ready", "Your content has been generated succes
 ### Debug Mode
 
 Enable detailed logging by running the server with environment variable:
+
 ```bash
 HITL_DEBUG=1 uvx hitl-mcp-server
 ```
@@ -338,14 +367,43 @@ HITL_DEBUG=1 uvx hitl-mcp-server
 ## 🏗️ Development
 
 ### Project Structure
+
 ```
 Human-In-the-Loop-MCP-Server/
-├── human_loop_server.py       # Main server implementation
-├── pyproject.toml            # Package configuration
-├── README.md                 # Documentation
-├── LICENSE                   # MIT License
-├── .gitignore               # Git ignore rules
-└── demo.gif                 # Demo animation
+├── human_loop_server.py       # Main server entry point
+├── src/human_in_the_loop/     # Main package
+│   ├── __init__.py           # Package initialization
+│   ├── dialogs/              # GUI dialog implementations  
+│   │   ├── __init__.py
+│   │   ├── base.py          # Base dialog class
+│   │   ├── input.py         # Text input dialogs
+│   │   ├── choice.py        # Choice selection dialogs
+│   │   ├── multiline.py     # Multi-line text input
+│   │   ├── confirmation.py  # Yes/no confirmation dialogs
+│   │   └── info.py          # Information display dialogs
+│   ├── tools/               # MCP tool definitions
+│   │   ├── __init__.py
+│   │   ├── dialog_tools.py  # FastMCP tool registration
+│   │   └── prompts.py       # LLM guidance prompts
+│   └── utils/               # Cross-platform utilities
+│       ├── __init__.py
+│       ├── platform.py      # Platform detection
+│       ├── styling.py       # GUI styling and theming
+│       └── gui.py           # GUI initialization
+├── docs/                    # Documentation
+│   ├── README.md           # Setup and usage guides
+│   ├── CONTEXT.md          # Architectural decisions
+│   ├── tasks/              # Task breakdown
+│   └── ToT/                # Tree of Thoughts analysis
+├── examples/               # Usage examples
+│   └── README.md          # Example code and integrations
+├── tests/                 # Test suite
+│   └── test_dialogs.py    # Dialog tests
+├── pyproject.toml         # Package configuration
+├── README.md              # Main documentation
+├── LICENSE                # MIT License
+├── .gitignore            # Git ignore rules
+└── demo.gif              # Demo animation
 ```
 
 ### Contributing
@@ -367,18 +425,21 @@ Human-In-the-Loop-MCP-Server/
 ## 🌍 Platform Support
 
 ### Windows
+
 - Windows 10/11 with modern UI styling
 - Enhanced visual design with hover effects
 - Segoe UI and Consolas font integration
 - Full keyboard navigation support
 
 ### macOS
+
 - Native macOS experience
 - SF Pro Display system fonts
 - Proper window management and focus
 - Accessibility permission handling
 
 ### Linux
+
 - Ubuntu/Debian compatible
 - Modern styling with system fonts
 - Cross-distribution GUI support

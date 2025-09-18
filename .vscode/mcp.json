@@ -1,0 +1,32 @@
+{
+    "servers": {
+        "human-in-the-loop": {
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "human_loop_server.py"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio"
+        },
+        "deep-code-reasoning": {
+            "command": "node",
+            "args": [
+                "/home/lucas_galdino/repositories/mcp_servers/mcp-server-deep-code-reasoning-mcp/dist/src/index.js"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-deep-code-reasoning-mcp",
+            "env": {
+                "GEMINI_API_KEY": "${input:geminiApiKey}"
+            }
+        }
+    },
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "geminiApiKey",
+            "description": "Enter your Gemini API Key",
+            "password": true
+        }
+    ]
+}
