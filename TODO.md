@@ -4,15 +4,15 @@ These to-dos may or may not be detailed. They are basic drafts of future tasks.
 
 ## Current To-dos
 
-- [ ] | high | hitl-1  | Setup `.github/` folder.
-- [ ] | high | hitl-14 |  Improve UI/UX
-   1. | high | hitl-15 | #think in a plan and immediately fix the UI/UX to be more user friendly. I think the tkinter makes things too complex.
-      - Explore the authors choice. Why he chose these approach instead of others? What are the limitations from the current ones? (the vscode or any other ide built-in ones solutions).
-- [ ] | priority | hitl-2  | Create workspace structure
-- [ ] | priority | hitl-3  | Define repo structure
+- [x] | high | hitl-1  | Setup `.github/` folder. ✅ COMPLETED
+- [ ] | high | hitl-14 | Improve MCP Server UI/UX
+   1. | high | hitl-15 | Improve the tkinter GUI for better user experience while maintaining human-in-the-loop capability. Focus on MCP server improvements, not VS Code extension.
+      - The tkinter approach is correct for human-in-the-loop interruption of AI workflows via MCP protocol.
+- [x] | priority | hitl-2  | Create workspace structure ✅ COMPLETED
+- [x] | priority | hitl-3  | Define repo structure ✅ COMPLETED
 - [ ] | priority | hitl-4  | Refactor codebase
   All docs must be in their proper `docs/` folder, and if there isn't update.
-  - | priority | hitl-4-1 |  Create a clear doc of what the project is currently about, its capabilities, limitations and complexity
+  - [x] | priority | hitl-4-1 |  Create a clear doc of what the project is currently about, its capabilities, limitations and complexity ✅ COMPLETED
   - | priority | hitl-4-2 |  Define project scope
     - Add each ToT to `docs/ToT/{}.md`
     - For each ToT, break down into smaller tasks and prioritize them based on impact and effort

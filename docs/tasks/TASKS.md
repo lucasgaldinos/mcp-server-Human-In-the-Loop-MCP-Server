@@ -26,8 +26,7 @@ This document provides a comprehensive breakdown of tasks for the Human-In-the-L
 **Effort**: 5 story points  
 **Components**:
 
-- [x] Analyze VS Code AI extensibility documentation
-- [x] Document current tkinter limitations
+- [ ] Document current tkinter limitations
 - [ ] Create migration strategy document
 - [ ] Prototype VS Code chat participant approach
 - [ ] Compare with language model tools approach
@@ -40,14 +39,13 @@ This document provides a comprehensive breakdown of tasks for the Human-In-the-L
 - Language Model Tools enable automatic invocation in agent mode
 - MCP integration can leverage VS Code's built-in capabilities
 
-#### HITL-15-1: Implement VS Code Chat Participant Prototype
+#### HITL-15-1: Improve VS Code Chat Participant Prototype
 
 **Status**: Not Started  
 **Effort**: 8 story points  
 **Dependencies**: HITL-15  
 **Components**:
 
-- [ ] Create VS Code extension scaffold
 - [ ] Implement basic chat participant for human-loop interactions
 - [ ] Convert `get_user_input` to chat-based flow
 - [ ] Convert `get_user_choice` to chat interface
@@ -65,11 +63,11 @@ This document provides a comprehensive breakdown of tasks for the Human-In-the-L
 
 **Completed**:
 
-- [x] Create docs/ directory structure
+- [ ] Create docs/ directory structure
 - [x] Add CONTEXT.md with architectural analysis
 - [x] Create WORKSPACE_PRACTICES.md with development guidelines
 - [x] Establish .github/ folder with copilot instructions
-
+  
 **Remaining**:
 
 - [ ] Create tests/ directory structure
@@ -108,7 +106,7 @@ This document provides a comprehensive breakdown of tasks for the Human-In-the-L
 **Components**:
 
 - [x] Analyze current architecture and document in CONTEXT.md
-- [x] Document VS Code integration opportunities
+- [ ] Document VS Code GitHub Copilot chat opportunities
 - [ ] Create formal capability matrix
 - [ ] Document performance characteristics
 - [ ] Add complexity analysis for different interaction patterns
