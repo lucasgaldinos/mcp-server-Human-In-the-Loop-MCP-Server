@@ -1,13 +1,35 @@
 {
     "servers": {
-        "human-in-the-loop-dev": {
+        "human-in-the-loop-v4-1-clean": {
+            "command": "uv",
             "args": [
-                "--from",
-                "/home/lucas_galdino/repositories/mcp_servers/human-in-the-loop",
-                "hitl-mcp-server"
+                "run",
+                "python",
+                "run_server.py"
             ],
-            "command": "uvx",
-            "type": "stdio"
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio",
+            "env": {
+                "PYTHONPATH": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server/src",
+                "FASTMCP_LOG_LEVEL": "INFO",
+                "MCP_REQUEST_TIMEOUT": "300",
+                "MCP_CONNECTION_TIMEOUT": "30"
+            }
         },
+        "human-in-the-loop-v3-legacy": {
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "human_loop_server_v3.py"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio",
+            "env": {
+                "FASTMCP_LOG_LEVEL": "INFO",
+                "MCP_REQUEST_TIMEOUT": "300",
+                "MCP_CONNECTION_TIMEOUT": "30"
+            }
+        }
     }
 }
