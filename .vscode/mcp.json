@@ -1,68 +1,28 @@
 {
     "servers": {
-        "human-in-the-loop-v4-1-clean": {
-            // Dev branch - v4.1 clean implementation with 5 working tools  
+        "hitl-main": {
             "command": "uvx",
             "args": [
-                "--from",
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev",
+                "--from", 
+                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@main", 
                 "hitl-mcp-server"
-            ],
-            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
-            "type": "stdio",
-            "env": {
-                "FASTMCP_LOG_LEVEL": "INFO",
-                "MCP_REQUEST_TIMEOUT": "300",
-                "MCP_CONNECTION_TIMEOUT": "30"
-            }
+            ]
         },
-        "human-in-the-loop-main": {
-            // Main branch - production ready with prompts integration
+        "hitl-dev": {
             "command": "uvx",
             "args": [
-                "--from",
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@main",
+                "--from", 
+                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev", 
                 "hitl-mcp-server"
-            ],
-            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
-            "type": "stdio",
-            "env": {
-                "FASTMCP_LOG_LEVEL": "INFO",
-                "MCP_REQUEST_TIMEOUT": "300",
-                "MCP_CONNECTION_TIMEOUT": "30"
-            }
+            ]
         },
-        "human-in-the-loop-original-vision": {
-            // Original-project branch - modular architecture with comprehensive guidance
+        "hitl-original": {
             "command": "uvx",
             "args": [
-                "--from",
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@original-project",
+                "--from", 
+                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@original-project", 
                 "hitl-mcp-server"
-            ],
-            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
-            "type": "stdio",
-            "env": {
-                "FASTMCP_LOG_LEVEL": "INFO",
-                "MCP_REQUEST_TIMEOUT": "300",
-                "MCP_CONNECTION_TIMEOUT": "30"
-            }
-        },
-        "human-in-the-loop-v3-legacy": {
-            // V3 legacy version - using dev branch 
-            "command": "uvx",
-            "args": [
-                "--from",
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev",
-                "hitl-mcp-server"
-            ],
-            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
-            "type": "stdio",
-            "env": {
-                "FASTMCP_LOG_LEVEL": "INFO",
-                "MCP_REQUEST_TIMEOUT": "300",
-                "MCP_CONNECTION_TIMEOUT": "30"
-            }
+            ]
         }
     }
 }
