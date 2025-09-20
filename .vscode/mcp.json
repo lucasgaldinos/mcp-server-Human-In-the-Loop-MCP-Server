@@ -1,26 +1,18 @@
 {
     "servers": {
-        "hitl-main": {
-            "command": "uvx",
-            "args": [
-                "--from", 
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@main", 
-                "hitl-mcp-server"
-            ]
-        },
         "hitl-dev": {
             "command": "uvx",
             "args": [
-                "--from", 
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev", 
+                "--from",
+                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev",
                 "human-in-the-loop-mcp-server"
             ]
         },
         "hitl-original": {
             "command": "uvx",
             "args": [
-                "--from", 
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@original-project", 
+                "--from",
+                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@original-project",
                 "hitl-mcp-server"
             ]
         }
