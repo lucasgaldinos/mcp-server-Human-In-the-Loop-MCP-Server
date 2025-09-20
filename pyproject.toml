@@ -66,7 +66,7 @@ Issues = "https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Serv
 Documentation = "https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server#readme"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
+packages = ["src/human_in_the_loop_mcp"]
 
 [tool.hatch.build.targets.sdist]
 include = [
