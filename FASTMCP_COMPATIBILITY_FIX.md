@@ -3,6 +3,7 @@
 ## Problem Solved
 
 All tools in the Human-in-the-Loop MCP Server were failing with:
+
 ```
 Error calling tool: 'Context' object has no attribute 'logger'
 ```
@@ -10,7 +11,8 @@ Error calling tool: 'Context' object has no attribute 'logger'
 ## Root Cause
 
 The server implementations were using outdated FastMCP API patterns:
-- **Broken:** `ctx.logger.info()`, `ctx.logger.error()` 
+
+- **Broken:** `ctx.logger.info()`, `ctx.logger.error()`
 - **Correct:** `await ctx.info()`, `await ctx.error()`
 
 ## Fix Applied
@@ -18,12 +20,14 @@ The server implementations were using outdated FastMCP API patterns:
 Updated all logging calls in the v4.1 server implementation to use the correct FastMCP 2.12+ async logging methods:
 
 ### Before (Broken)
+
 ```python
 ctx.logger.info(f"Requesting user input: {prompt}")
 ctx.logger.error(f"Error in get_user_input: {e}")
 ```
 
 ### After (Working)
+
 ```python
 await ctx.info(f"Requesting user input: {prompt}")
 await ctx.error(f"Error in get_user_input: {e}")
@@ -32,9 +36,11 @@ await ctx.error(f"Error in get_user_input: {e}")
 ## Changes Made
 
 ### Files Updated
+
 - `src/human_in_the_loop_mcp/server.py` - Fixed all 16 logging calls
 
 ### Logging Methods Updated
+
 - `get_user_input()` - 3 logging calls fixed
 - `get_user_choice()` - 3 logging calls fixed  
 - `show_confirmation_dialog()` - 4 logging calls fixed
@@ -42,6 +48,7 @@ await ctx.error(f"Error in get_user_input: {e}")
 - `health_check()` - 3 logging calls fixed
 
 ### API Changes Applied
+
 - `ctx.logger.info()` → `await ctx.info()`
 - `ctx.logger.error()` → `await ctx.error()`
 - `ctx.logger.warning()` → `await ctx.warning()` (if any existed)
@@ -67,8 +74,9 @@ All 5 core tools should now work correctly:
 ## Future Prevention
 
 To prevent this issue in the future:
+
 - Always use `await ctx.info()` instead of `ctx.logger.info()`
-- Follow current FastMCP documentation at https://gofastmcp.com
+- Follow current FastMCP documentation at <https://gofastmcp.com>
 - Use async logging methods consistently
 - Test server startup after any Context-related changes
 

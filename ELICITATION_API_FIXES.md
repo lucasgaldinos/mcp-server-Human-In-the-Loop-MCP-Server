@@ -7,7 +7,9 @@ Fixed all elicitation API calls in the Human-In-the-Loop MCP Server to be compat
 ## Changes Made
 
 ### 1. Get User Input (`get_user_input`)
+
 **Before:**
+
 ```python
 result = await ctx.elicit(
     "string",
@@ -18,6 +20,7 @@ result = await ctx.elicit(
 ```
 
 **After:**
+
 ```python
 result = await ctx.elicit(
     message=prompt,
@@ -26,7 +29,9 @@ result = await ctx.elicit(
 ```
 
 ### 2. Get User Choice (`get_user_choice`)
+
 **Before:**
+
 ```python
 result = await ctx.elicit(
     "enum",
@@ -37,6 +42,7 @@ result = await ctx.elicit(
 ```
 
 **After:**
+
 ```python
 result = await ctx.elicit(
     message=prompt,
@@ -45,7 +51,9 @@ result = await ctx.elicit(
 ```
 
 ### 3. Show Confirmation Dialog (`show_confirmation_dialog`)
+
 **Before:**
+
 ```python
 result = await ctx.elicit(
     "boolean",
@@ -55,6 +63,7 @@ result = await ctx.elicit(
 ```
 
 **After:**
+
 ```python
 result = await ctx.elicit(
     message=f"{message}\n\nChoose {confirm_text} or {cancel_text}:",
@@ -63,7 +72,9 @@ result = await ctx.elicit(
 ```
 
 ### 4. Show Info Message (`show_info_message`)
+
 **Before:**
+
 ```python
 result = await ctx.elicit(
     "string",
@@ -73,6 +84,7 @@ result = await ctx.elicit(
 ```
 
 **After:**
+
 ```python
 result = await ctx.elicit(
     message=f"[{info_type.upper()}] {message}\n\nPress any key to continue...",
@@ -90,6 +102,7 @@ result = await ctx.elicit(
 ## Testing Results
 
 All 5 tools now work correctly:
+
 - ✅ `get_user_input` - Single-line text input via Command Palette
 - ✅ `get_user_choice` - Multiple choice selection via Command Palette  
 - ✅ `show_confirmation_dialog` - Confirmation dialogs via elicitation
