@@ -1,0 +1,67 @@
+{
+    "servers": {
+        "human-in-the-loop-v4-1-clean": {
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd /home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server && git checkout dev && uv run run_server.py"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio",
+            "env": {
+                "PYTHONPATH": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server/src",
+                "FASTMCP_LOG_LEVEL": "INFO",
+                "MCP_REQUEST_TIMEOUT": "300",
+                "MCP_CONNECTION_TIMEOUT": "30"
+            }
+        },
+        "human-in-the-loop-main": {
+            // Main branch - production ready with prompts integration
+            "command": "uvx",
+            "args": [
+                "--from",
+                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@main",
+                "hitl-mcp-server"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio",
+            "env": {
+                "FASTMCP_LOG_LEVEL": "INFO",
+                "MCP_REQUEST_TIMEOUT": "300",
+                "MCP_CONNECTION_TIMEOUT": "30"
+            }
+        },
+        "human-in-the-loop-original-vision": {
+            // Original-project branch - modular architecture with comprehensive guidance
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd /home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server && git checkout original-project && uv run src/human_in_the_loop/server.py"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio",
+            "env": {
+                "PYTHONPATH": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+                "FASTMCP_LOG_LEVEL": "INFO",
+                "MCP_REQUEST_TIMEOUT": "300",
+                "MCP_CONNECTION_TIMEOUT": "30"
+            }
+        },
+        "human-in-the-loop-v3-legacy": {
+            // V3 legacy version in legacy/ directory
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd /home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server && git checkout dev && uv run legacy/human_loop_server_v3.py"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server",
+            "type": "stdio",
+            "env": {
+                "PYTHONPATH": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server/src",
+                "FASTMCP_LOG_LEVEL": "INFO",
+                "MCP_REQUEST_TIMEOUT": "300",
+                "MCP_CONNECTION_TIMEOUT": "30"
+            }
+        }
+    }
+}
