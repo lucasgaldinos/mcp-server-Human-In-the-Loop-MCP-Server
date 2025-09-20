@@ -13,7 +13,7 @@
             "args": [
                 "--from", 
                 "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev", 
-                "hitl-mcp-server"
+                "human-in-the-loop-mcp-server"
             ]
         },
         "hitl-original": {
