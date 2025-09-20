@@ -1,0 +1,9 @@
+{
+    "chat.mcp.serverSampling": {
+        "mcp-server-Human-In-the-Loop-MCP-Server/.vscode/mcp.json: human-in-the-loop-v3": {
+            "allowedModels": [
+                "copilot/gpt-4.1"
+            ]
+        }
+    }
+}
