@@ -1,20 +1,28 @@
 {
     "servers": {
-        "hitl-dev": {
-            "command": "uvx",
+        "human-in-the-loop-mcp-dev": {
+            "command": "uv",
             "args": [
-                "--from",
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@dev",
+                "run",
                 "human-in-the-loop-mcp-server"
-            ]
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server"
         },
-        "hitl-original": {
-            "command": "uvx",
-            "args": [
-                "--from",
-                "git+https://github.com/lucasgaldinos/mcp-server-Human-In-the-Loop-MCP-Server@original-project",
-                "hitl-mcp-server"
-            ]
-        }
+        // "human-in-the-loop-mcp-tkinter": {
+        //     "command": "uv",
+        //     "args": [
+        //         "run",
+        //         "human_loop_server.py"
+        //     ],
+        //     "cwd": "/home/lucas_galdino/repositories/mcp_servers/human-in-the-loop-tkinter"
+        // },
+        // "human-in-the-loop-mcp-main": {
+        //     "command": "uv",
+        //     "args": [
+        //         "run",
+        //         "human_loop_server.py"
+        //     ],
+        //     "cwd": "/home/lucas_galdino/repositories/mcp_servers/human-in-the-loop-main"
+        // }
     }
 }
