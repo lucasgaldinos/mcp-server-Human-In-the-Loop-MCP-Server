@@ -21,6 +21,9 @@ from typing import Dict, Any, Optional
 from fastmcp import FastMCP, Context
 from pydantic import Field
 
+# Import prompts module
+from . import prompts
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -195,23 +198,36 @@ async def show_confirmation_dialog(
     try:
         await ctx.info(f"Requesting user confirmation: {message}")
         
-        # Use ctx.elicit with None response type for confirmation
+        # Use boolean response_type for clearer Yes/No dialog
+        # This creates a more explicit boolean choice interface in VS Code
+        formatted_message = f"{message}"
+        if title:
+            formatted_message = f"{title}: {message}"
+            
         result = await ctx.elicit(
-            message=f"{message}\n\nChoose {confirm_text} or {cancel_text}:",
-            response_type=None
+            message=formatted_message,
+            response_type=bool
         )
         
         if result.action == "accept":
-            await ctx.info(f"User confirmed: {message}")
+            if result.data:  # User selected True/Yes
+                await ctx.info(f"User confirmed: {message}")
+                return {
+                    "success": True,
+                    "result": f"User confirmed: {message}"
+                }
+            else:  # User selected False/No
+                await ctx.info(f"User declined: {message}")
+                return {
+                    "success": True,
+                    "result": f"User declined: {message}"
+                }
+        else:  # User cancelled (ESC, etc.)
+            await ctx.info(f"User cancelled confirmation: {message}")
             return {
-                "success": True,
-                "result": f"User confirmed: {message}"
-            }
-        else:
-            await ctx.info(f"User declined: {message}")
-            return {
-                "success": True,
-                "result": f"User declined: {message}"
+                "success": False,
+                "error": "User cancelled confirmation",
+                "result": f"User cancelled confirmation: {message}"
             }
         
     except Exception as e:
@@ -336,6 +352,10 @@ def main():
     try:
         logger.info("Starting Human-in-the-Loop MCP Server v4.1")
         logger.info("Available tools: get_user_input, get_user_choice, show_confirmation_dialog, show_info_message, health_check")
+        # Register prompts
+        logger.info("Registering MCP prompts...")
+        prompts.register_prompts(mcp)
+        logger.info(prompts.get_prompt_summary())
         
         # Run the MCP server
         mcp.run()
