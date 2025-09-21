@@ -1,0 +1,28 @@
+{
+    "servers": {
+        "human-in-the-loop-mcp-dev": {
+            "command": "uv",
+            "args": [
+                "run",
+                "human-in-the-loop-mcp-server"
+            ],
+            "cwd": "/home/lucas_galdino/repositories/mcp_servers/mcp-server-Human-In-the-Loop-MCP-Server"
+        },
+        // "human-in-the-loop-mcp-tkinter": {
+        //     "command": "uv",
+        //     "args": [
+        //         "run",
+        //         "human_loop_server.py"
+        //     ],
+        //     "cwd": "/home/lucas_galdino/repositories/mcp_servers/human-in-the-loop-tkinter"
+        // },
+        // "human-in-the-loop-mcp-main": {
+        //     "command": "uv",
+        //     "args": [
+        //         "run",
+        //         "human_loop_server.py"
+        //     ],
+        //     "cwd": "/home/lucas_galdino/repositories/mcp_servers/human-in-the-loop-main"
+        // }
+    }
+}
